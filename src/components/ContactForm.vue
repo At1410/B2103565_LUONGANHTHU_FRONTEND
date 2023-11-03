@@ -45,7 +45,8 @@ export default {
     },
     emits: ["submit:contact", "delete:contact"],
     props: {
-        contact: { type: Object, required: true }
+        mode: { type: String, required: true },
+        contact: { type: Object, required: true },
     },
     data() {
         const contactFormSchema = yup.object().shape({
@@ -67,9 +68,8 @@ export default {
                 ),
         });
         return {
-            // Chúng ta sẽ không muốn hiệu chỉnh props, nên tạo biến cục bộ
-            // contactLocal để liên kết với các input trên form
             contactLocal: this.contact,
+            contactLocal: this.mode === "add" ? {} : { ...this.contact },
             contactFormSchema,
         };
     },
@@ -79,6 +79,9 @@ export default {
         },
         deleteContact() {
             this.$emit("delete:contact", this.contactLocal.id);
+            if (confirm("Bạn có muốn xóa liên hệ này?")) {
+                this.$emit("delete:contact", this.contactLocal.id);
+            }
         },
     },
 };
